@@ -1,0 +1,155 @@
+"""
+SQLAlchemy ORM models.
+
+These Python classes map to database tables.
+Each class = a table, each attribute = a column.
+
+Example: User class creates a 'users' table with columns like id, email, hashed_password, etc.
+"""
+
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, UniqueConstraint
+from sqlalchemy.sql import func
+from app.database import Base
+from sqlalchemy.orm import relationship
+
+class User(Base):
+    """
+    User table - stores user account information.
+    
+    Attributes:
+        id: Unique identifier (Primary Key)
+        email: User's email (unique, used for login)
+        username: Display name
+        hashed_password: Password hashed with bcrypt (never store plain passwords!)
+        created_at: When the account was created
+    """
+    __tablename__ = "users"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    def __repr__(self):
+        return f"<User(id={self.id}, email={self.email}, username={self.username})>"
+
+
+class Project(Base):
+    """
+    Project table - stores project information.
+
+    Attributes:
+        id: Unique identifier (Primary Key)
+        name: Project name
+        description: Project description
+        owner_id: The user who created the project
+        created_at: When the project was created
+        updated_at: When the project was last updated
+    """
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, index=True)
+    description = Column(Text, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    def __repr__(self):
+        return f"<Project(id={self.id}, name={self.name}, owner_id={self.owner_id})>"
+
+class Document(Base):
+    """
+    Document table - stores uploaded files for projects.
+
+    Attributes:
+        id: Unique identifier
+        filename: Original filename uploaded by the user
+        filepath: Physical path on disk
+        content_type: MIME type (application/pdf, etc.)
+        project_id: Project that owns the document
+        uploaded_at: Upload timestamp
+    """
+
+    __tablename__ = "documents"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    filename = Column(String, nullable=False)
+
+    filepath = Column(String, nullable=False)
+
+    content_type = Column(String, nullable=False)
+
+    project_id = Column(
+        Integer,
+        ForeignKey("projects.id"),
+        nullable=False,
+        index=True
+    )
+
+    uploaded_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    def __repr__(self):
+        return (
+            f"<Document(id={self.id}, "
+            f"filename={self.filename}, "
+            f"project_id={self.project_id})>"
+        )
+    
+class ProjectMember(Base):
+    """
+    Stores users participating in projects.
+
+    A project always has:
+        - one OWNER
+        - zero or more PARTICIPANTS
+    """
+
+    __tablename__ = "project_members"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    project_id = Column(
+        Integer,
+        ForeignKey("projects.id"),
+        nullable=False,
+        index=True
+    )
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
+
+    role = Column(
+        String,
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "project_id",
+            "user_id",
+            name="uq_project_member"
+        ),
+    )
+
+    def __repr__(self):
+        return (
+            f"<ProjectMember("
+            f"project={self.project_id}, "
+            f"user={self.user_id}, "
+            f"role={self.role})>"
+        )
