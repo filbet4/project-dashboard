@@ -117,22 +117,18 @@ def update_project(project_id: int, project_data: ProjectUpdate, token: str = No
 
 
 @router.delete("/{project_id}")
-def delete_project(project_id: int, token: str = None, db: Session = Depends(get_db)):
+def delete_project(
+    project_id: int,
+    token: str = None,
+    db: Session = Depends(get_db)
+):
     """Delete a project if the current user owns it."""
 
     current_user = get_current_user(token, db)
+
     project = get_project_or_404(project_id, db)
+
     require_owner(project, current_user)
-
-    # delete project members
-    db.query(ProjectMember).filter(
-        ProjectMember.project_id == project.id
-    ).delete()
-
-    # delete uploaded documents
-    db.query(Document).filter(
-        Document.project_id == project.id
-    ).delete()
 
     db.delete(project)
     db.commit()

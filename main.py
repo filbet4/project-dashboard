@@ -4,7 +4,8 @@ from app.routes.users import router as users_router
 from app.routes.projects import router as projects_router
 from app.routes.documents import router as documents_router
 from app.routes.members import router as members_router
-# Create database tables if they don't exist
+from contextlib import asynccontextmanager
+
 # This runs the CREATE TABLE statements based on our models
 
 
@@ -12,15 +13,20 @@ from app.routes.members import router as members_router
 app = FastAPI(
     title="Project Dashboard API",
     description="A collaborative project management backend",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
 
-@app.on_event("startup")
-def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """
-    Create database tables when the application starts.
+    Runs once when the application starts.
     """
-    Base.metadata.create_all(bind=engine)
+
+
+    yield
+
+    # Code placed here would run during application shutdown.
 app.include_router(documents_router)
 # Include user routes
 # This registers all the endpoints from users.py under /users

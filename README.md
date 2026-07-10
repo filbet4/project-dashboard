@@ -271,7 +271,27 @@ python test_phase5.py
 
 ---
 
-# API Documentation
+## Database migrations
+
+Create a new migration:
+
+```bash
+alembic revision --autogenerate -m "Describe your change"
+```
+
+Apply migrations:
+
+```bash
+alembic upgrade head
+```
+
+Rollback one migration:
+
+```bash
+alembic downgrade -1
+```
+
+## API Documentation
 
 Interactive Swagger documentation:
 
@@ -296,6 +316,6 @@ http://localhost:8000/docs
 
 # Author
 
-Developed by **Darek Bętkowski**
+Developed by **Filip Bętkowski**
 
 Project created for backend learning using FastAPI, PostgreSQL, Docker and GitHub Actions.

@@ -30,34 +30,67 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
     def __repr__(self):
         return f"<User(id={self.id}, email={self.email}, username={self.username})>"
 
+    projects = relationship(
+    "Project",
+    back_populates="owner"
+    )
+
+    memberships = relationship(
+        "ProjectMember",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
 
 class Project(Base):
-    """
-    Project table - stores project information.
-
-    Attributes:
-        id: Unique identifier (Primary Key)
-        name: Project name
-        description: Project description
-        owner_id: The user who created the project
-        created_at: When the project was created
-        updated_at: When the project was last updated
-    """
     __tablename__ = "projects"
 
     id = Column(Integer, primary_key=True, index=True)
+
     name = Column(String, nullable=False, index=True)
+
     description = Column(Text, nullable=False)
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    owner_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    owner = relationship(
+        "User",
+        back_populates="projects"
+    )
+
+    documents = relationship(
+        "Document",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
+
+    members = relationship(
+        "ProjectMember",
+        back_populates="project",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
-        return f"<Project(id={self.id}, name={self.name}, owner_id={self.owner_id})>"
+        return f"<Project(id={self.id}, name={self.name})>"
 
 class Document(Base):
     """
@@ -100,6 +133,10 @@ class Document(Base):
             f"filename={self.filename}, "
             f"project_id={self.project_id})>"
         )
+    project = relationship(
+    "Project",
+    back_populates="documents"
+    )
     
 class ProjectMember(Base):
     """
@@ -153,3 +190,13 @@ class ProjectMember(Base):
             f"user={self.user_id}, "
             f"role={self.role})>"
         )
+    project = relationship(
+    "Project",
+    back_populates="members"
+    )
+
+    user = relationship(
+        "User",
+        back_populates="memberships"
+    )
+        

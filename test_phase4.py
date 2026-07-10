@@ -36,7 +36,7 @@ def test_phase4():
         f"{BASE_URL}/users/register",
         json={
             "email": user1_email,
-            "username": "doc_owner",
+            "username": f"user1_{int(datetime.now().timestamp())}",
             "password": "Password123!"
         }
     )
@@ -50,7 +50,7 @@ def test_phase4():
         f"{BASE_URL}/users/register",
         json={
             "email": user2_email,
-            "username": "doc_attacker",
+            "username": f"user2_{int(datetime.now().timestamp())}",
             "password": "Password123!"
         }
     )

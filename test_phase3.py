@@ -26,7 +26,7 @@ def test_phase3():
     # Register User 1
     r = requests.post(f"{BASE_URL}/users/register", json={
         "email": user1_email,
-        "username": "user1_test",
+        "username": f"user1_{int(datetime.now().timestamp())}",
         "password": "Password123!"
     })
     assert r.status_code == 200, f"User1 registration failed: {r.text}"
@@ -36,7 +36,7 @@ def test_phase3():
     # Register User 2
     r = requests.post(f"{BASE_URL}/users/register", json={
         "email": user2_email,
-        "username": "user2_test",
+        "username": f"user2_{int(datetime.now().timestamp())}",
         "password": "Password123!"
     })
     assert r.status_code == 200, f"User2 registration failed: {r.text}"
