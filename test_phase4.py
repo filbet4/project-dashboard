@@ -13,9 +13,10 @@ This test suite validates:
 import requests
 import os
 from datetime import datetime
+import uuid
 
 BASE_URL = "http://localhost:8000"
-
+unique = uuid.uuid4().hex[:8]
 
 def test_phase4():
     print("\n" + "=" * 70)
@@ -28,15 +29,15 @@ def test_phase4():
 
     print("\n[SETUP] Creating two test users...")
 
-    user1_email = f"user1_docs_{int(datetime.now().timestamp())}@test.com"
-    user2_email = f"user2_docs_{int(datetime.now().timestamp())}@test.com"
+    user1_email = f"user1_docs_{unique}@test.com"
+    user2_email = f"user2_docs_{unique}@test.com"
 
     # Register User 1
     r = requests.post(
         f"{BASE_URL}/users/register",
         json={
             "email": user1_email,
-            "username": f"user1_{int(datetime.now().timestamp())}",
+            "username": f"user1_{unique}",
             "password": "Password123!"
         }
     )
@@ -50,12 +51,12 @@ def test_phase4():
         f"{BASE_URL}/users/register",
         json={
             "email": user2_email,
-            "username": f"user2_{int(datetime.now().timestamp())}",
+            "username": f"user2_{unique}",
             "password": "Password123!"
         }
     )
 
-    assert r.status_code == 200
+    assert r.status_code == 200, r.text
     user2_id = r.json()["id"]
     print(f"✅ User 2 created (ID: {user2_id})")
 
@@ -98,7 +99,7 @@ def test_phase4():
         }
     )
 
-    assert r.status_code == 201
+    assert r.status_code == 201, r.text
 
     project = r.json()
     project_id = project["id"]
