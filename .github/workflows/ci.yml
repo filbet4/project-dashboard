@@ -55,6 +55,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run Alembic migrations
+        run: |
+          alembic upgrade head
+
       - name: Start FastAPI
         run: |
           nohup python main.py > server.log 2>&1 &
