@@ -8,15 +8,6 @@ from contextlib import asynccontextmanager
 
 # This runs the CREATE TABLE statements based on our models
 
-
-# Create the FastAPI application instance
-app = FastAPI(
-    title="Project Dashboard API",
-    description="A collaborative project management backend",
-    version="0.1.0",
-    lifespan=lifespan
-)
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -25,6 +16,15 @@ async def lifespan(app: FastAPI):
 
 
     yield
+    
+# Create the FastAPI application instance
+app = FastAPI(
+    title="Project Dashboard API",
+    description="A collaborative project management backend",
+    version="0.1.0",
+    lifespan=lifespan
+)
+
 
     # Code placed here would run during application shutdown.
 app.include_router(documents_router)
