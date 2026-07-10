@@ -95,9 +95,7 @@ def upload_document(
         exist_ok=True
     )
 
-    unique_filename = (
-        f"{uuid.uuid4()}{extension}"
-    )
+    unique_filename = f"{uuid.uuid4()}{extension}"
 
     full_path = os.path.join(
         project_folder,
@@ -250,3 +248,80 @@ def delete_document(
     return {
         "detail": "Document deleted successfully"
     }
+
+@router.put("/{document_id}")
+def update_document(
+    document_id: int,
+    file: UploadFile = File(...),
+    token: str = None,
+    db: Session = Depends(get_db)
+):
+    """
+    Replace an existing document.
+
+    OWNER and PARTICIPANT
+    can update project documents.
+    """
+
+    current_user = get_current_user(token, db)
+
+    document = (
+        db.query(Document)
+        .filter(Document.id == document_id)
+        .first()
+    )
+
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+
+    require_project_member(
+        document.project_id,
+        current_user,
+        db
+    )
+
+    extension = os.path.splitext(file.filename)[1].lower()
+
+    if extension not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF, DOC and DOCX files are allowed."
+        )
+
+    if os.path.exists(document.filepath):
+        os.remove(document.filepath)
+
+    project_folder = os.path.join(
+        UPLOAD_DIR,
+        f"project_{document.project_id}"
+    )
+
+    os.makedirs(
+        project_folder,
+        exist_ok=True
+    )
+
+    unique_filename = f"{uuid.uuid4()}{extension}"
+
+    full_path = os.path.join(
+        project_folder,
+        unique_filename
+    )
+
+    with open(full_path, "wb") as buffer:
+        shutil.copyfileobj(
+            file.file,
+            buffer
+        )
+
+    document.filename = file.filename
+    document.filepath = full_path
+    document.content_type = file.content_type
+
+    db.commit()
+    db.refresh(document)
+
+    return document

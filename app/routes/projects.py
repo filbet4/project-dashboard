@@ -134,3 +134,4 @@ def delete_project(
     db.commit()
 
     return {"detail": "Project deleted successfully"}
+

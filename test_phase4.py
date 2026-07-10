@@ -144,8 +144,29 @@ def test_phase4():
     # ---------------------------------------------------------
     # TEST 2
     # ---------------------------------------------------------
+    print("\n[TEST 2] Owner updates document...")
 
-    print("\n[TEST 2] List project documents...")
+    files = {
+        "file": (
+            "updated.pdf",
+            b"Updated PDF content",
+            "application/pdf"
+        )
+    }
+
+    r = requests.put(
+        f"{BASE_URL}/documents/{document_id}",
+        files=files,
+        params={"token": user1_token}
+    )
+
+    assert r.status_code == 200, r.text
+    updated = r.json()
+    assert updated["filename"] == "updated.pdf"
+
+    print("✅ Document updated successfully")
+
+    print("\n[TEST 3] List project documents...")
 
     r = requests.get(
         f"{BASE_URL}/documents/projects/{project_id}",
@@ -164,7 +185,7 @@ def test_phase4():
     # TEST 3
     # ---------------------------------------------------------
 
-    print("\n[TEST 3] Download document...")
+    print("\n[TEST 4] Download document...")
 
     r = requests.get(
         f"{BASE_URL}/documents/{document_id}",
@@ -179,7 +200,7 @@ def test_phase4():
     # TEST 4
     # ---------------------------------------------------------
 
-    print("\n[TEST 4] User 2 tries to list User 1 documents - SHOULD FAIL...")
+    print("\n[TEST 5] User 2 tries to list User 1 documents - SHOULD FAIL...")
 
     r = requests.get(
         f"{BASE_URL}/documents/projects/{project_id}",
@@ -196,7 +217,7 @@ def test_phase4():
     # TEST 5
     # ---------------------------------------------------------
 
-    print("\n[TEST 5] User 2 tries to download document - SHOULD FAIL...")
+    print("\n[TEST 6] User 2 tries to download document - SHOULD FAIL...")
 
     r = requests.get(
         f"{BASE_URL}/documents/{document_id}",
@@ -213,7 +234,7 @@ def test_phase4():
     # TEST 6
     # ---------------------------------------------------------
 
-    print("\n[TEST 6] User 2 tries to delete document - SHOULD FAIL...")
+    print("\n[TEST 7] User 2 tries to delete document - SHOULD FAIL...")
 
     r = requests.delete(
         f"{BASE_URL}/documents/{document_id}",
@@ -230,7 +251,7 @@ def test_phase4():
     # TEST 7
     # ---------------------------------------------------------
 
-    print("\n[TEST 7] Owner deletes document...")
+    print("\n[TEST 8] Owner deletes document...")
 
     r = requests.delete(
         f"{BASE_URL}/documents/{document_id}",
@@ -245,7 +266,7 @@ def test_phase4():
     # TEST 8
     # ---------------------------------------------------------
 
-    print("\n[TEST 8] Download deleted document - SHOULD RETURN 404...")
+    print("\n[TEST 9] Download deleted document - SHOULD RETURN 404...")
 
     r = requests.get(
         f"{BASE_URL}/documents/{document_id}",
@@ -260,7 +281,7 @@ def test_phase4():
     # TEST 9
     # ---------------------------------------------------------
 
-    print("\n[TEST 9] Missing token...")
+    print("\n[TEST 10] Missing token...")
 
     r = requests.get(
         f"{BASE_URL}/documents/projects/{project_id}"
@@ -274,7 +295,7 @@ def test_phase4():
     # TEST 10
     # ---------------------------------------------------------
 
-    print("\n[TEST 10] Invalid token...")
+    print("\n[TEST 11] Invalid token...")
 
     r = requests.get(
         f"{BASE_URL}/documents/projects/{project_id}",

@@ -1,0 +1,18 @@
+[project]
+name = "project-dashboard"
+version = "1.0.0"
+description = "Collaborative Project Dashboard API"
+readme = "README.md"
+requires-python = ">=3.12"
+
+authors = [
+    { name = "Filip Bętkowski" }
+]
+
+dependencies = []
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
