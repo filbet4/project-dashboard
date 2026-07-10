@@ -55,12 +55,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Start FastAPI
+        run: |
+          nohup python main.py > server.log 2>&1 &
+          sleep 10
+
+      - name: Check API
+        run: |
+          curl http://127.0.0.1:8000/health
+
       - name: Run Phase 3 Tests
         run: python test_phase3.py
-
-      - name: Show FastAPI logs
-        if: failure()
-        run: cat server.log
 
       - name: Run Phase 4 Tests
         run: python test_phase4.py
@@ -70,3 +75,12 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t project-dashboard .
+
+      - name: Show server log
+        if: always()
+        run: |
+          if [ -f server.log ]; then
+            cat server.log
+          else
+            echo "server.log not found"
+          fi
