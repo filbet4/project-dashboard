@@ -1,10 +1,6 @@
 """
 SQLAlchemy ORM models.
 
-These Python classes map to database tables.
-Each class = a table, each attribute = a column.
-
-Example: User class creates a 'users' table with columns like id, email, hashed_password, etc.
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, UniqueConstraint
@@ -13,16 +9,7 @@ from app.database import Base
 from sqlalchemy.orm import relationship
 
 class User(Base):
-    """
-    User table - stores user account information.
     
-    Attributes:
-        id: Unique identifier (Primary Key)
-        email: User's email (unique, used for login)
-        username: Display name
-        hashed_password: Password hashed with bcrypt (never store plain passwords!)
-        created_at: When the account was created
-    """
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)

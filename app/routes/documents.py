@@ -60,12 +60,6 @@ def upload_document(
     token: str = None,
     db: Session = Depends(get_db)
 ):
-    """
-    Upload a document to a project.
-
-    Both OWNER and PARTICIPANT
-    are allowed to upload files.
-    """
 
     user = get_current_user(token, db)
 
@@ -130,13 +124,7 @@ def list_documents(
     token: str = None,
     db: Session = Depends(get_db)
 ):
-    """
-    List all documents belonging to a project.
-
-    Both OWNER and PARTICIPANT
-    can view project documents.
-    """
-
+   
     user = get_current_user(token, db)
 
     project = get_project(project_id, db)
@@ -163,13 +151,7 @@ def download_document(
     token: str = None,
     db: Session = Depends(get_db)
 ):
-    """
-    Download a document.
-
-    Both OWNER and PARTICIPANT
-    can download files.
-    """
-
+    
     user = get_current_user(token, db)
 
     document = (
@@ -211,13 +193,7 @@ def delete_document(
     token: str = None,
     db: Session = Depends(get_db)
 ):
-    """
-    Delete a document.
-
-    Only the OWNER
-    can delete project documents.
-    """
-
+    
     user = get_current_user(token, db)
 
     document = (
@@ -256,13 +232,7 @@ def update_document(
     token: str = None,
     db: Session = Depends(get_db)
 ):
-    """
-    Replace an existing document.
-
-    OWNER and PARTICIPANT
-    can update project documents.
-    """
-
+    
     current_user = get_current_user(token, db)
 
     document = (

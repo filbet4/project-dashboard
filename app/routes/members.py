@@ -166,7 +166,6 @@ def remove_member(
             detail="Member not found"
         )
 
-    # Prevent removing the project owner
     if member.role == "OWNER":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

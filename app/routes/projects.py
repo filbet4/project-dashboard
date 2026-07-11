@@ -35,12 +35,10 @@ def create_project(project_data: ProjectCreate, token: str = None, db: Session =
         owner_id=current_user.id
     )
 
-    # Save project first
     db.add(new_project)
     db.commit()
     db.refresh(new_project)
 
-    # Automatically register the owner as the first project member
     owner_member = ProjectMember(
         project_id=new_project.id,
         user_id=current_user.id,

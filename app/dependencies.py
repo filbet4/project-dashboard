@@ -1,8 +1,6 @@
 """
 Shared dependencies used across the application.
 
-Keeping authentication and authorization logic
-in one place avoids code duplication.
 """
 
 from fastapi import HTTPException, status
@@ -13,10 +11,7 @@ from app.models import User, Project, ProjectMember
 
 
 def get_current_user(token: str, db: Session) -> User:
-    """
-    Returns the authenticated user based on JWT token.
-    """
-
+    
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,10 +76,7 @@ def require_owner(project: Project, user: User):
 
 
 def require_project_member(project_id: int, user: User, db: Session):
-    """
-    Allows access to every project member
-    (OWNER and PARTICIPANT).
-    """
+    
 
     member = (
         db.query(ProjectMember)
